@@ -1,0 +1,5 @@
+flask
+flask_sqlalchemy
+python_dotenv
+ollama
+numpy
