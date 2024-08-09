@@ -2,7 +2,7 @@ from typing import Any, AsyncGenerator, AsyncIterator, Literal, Mapping
 
 from ollama import AsyncClient, Client
 
-from oterm.config import envConfig
+from application.config import envConfig
 
 
 class OllamaLLM:
