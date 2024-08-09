@@ -1,8 +1,21 @@
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from application.app import db
 
 class Setting(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String(50), unique=True, nullable=False)
-    value = db.Column(db.String(200), nullable=False)
+    id = db.Column(db.BigInteger(), primary_key=True)
+    key = db.Column(db.Text(), unique=True, nullable=False)
+    value = db.Column(db.Text(), nullable=False)
+
+class ChatQuery(db.Model):
+    id = db.Column(db.BigInteger(), primary_key=True)
+    prompt = db.Column(db.Text(), nullable=False)
+    model = db.Column(db.Text(), nullable=False)
+    created_time = db.Column(db.DateTime, nullable=False, default=db.func.now())
+
+class ChatResponse(db.Model):
+    id = db.Column(db.BigInteger(), primary_key=True)
+    response = db.Column(db.Text(), nullable=False)
+    prompt = db.Column(db.Text(), nullable=False)
+    model = db.Column(db.Text(), nullable=False)
+    created_time = db.Column(db.DateTime, nullable=False, default=db.func.now())
+
+

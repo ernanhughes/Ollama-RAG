@@ -2,7 +2,7 @@ from typing import Any, AsyncGenerator, AsyncIterator, Literal, Mapping
 
 from ollama import AsyncClient, Client
 
-from application.config import envConfig
+from application.config import appConfig
 
 
 class OllamaLLM:
@@ -22,7 +22,7 @@ class OllamaLLM:
 
     async def completion(self, prompt: str, images: list[str] = []) -> str:
         client = AsyncClient(
-            host=envConfig.OLLAMA_URL, verify=envConfig.OTERM_VERIFY_SSL
+            host=appConfig.OLLAMA_URL, verify=appConfig.RAG_VERIFY_SSL
         )
         response: dict = await client.generate(
             model=self.model,
@@ -40,7 +40,7 @@ class OllamaLLM:
         self, prompt: str, images: list[str] = []
     ) -> AsyncGenerator[str, Any]:
         client = AsyncClient(
-            host=envConfig.OLLAMA_URL, verify=envConfig.OTERM_VERIFY_SSL
+            host=appConfig.OLLAMA_URL, verify=appConfig.RAG_VERIFY_SSL
         )
         stream: AsyncIterator[dict] = await client.generate(
             model=self.model,
@@ -61,10 +61,21 @@ class OllamaLLM:
 
     @staticmethod
     def list() -> Mapping[str, Any]:
-        client = Client(host=envConfig.OLLAMA_URL, verify=envConfig.OTERM_VERIFY_SSL)
+        client = Client(host=appConfig.OLLAMA_URL, verify=appConfig.RAG_VERIFY_SSL)
         return client.list()
 
     @staticmethod
+    def c_chat() -> Mapping[str, Any]:
+        messages = [  {
+            'role': 'user',
+            'content': 'Why is the sky blue?',
+          },
+        ]
+        response = chat('mistral', messages=messages)
+        print(response['message']['content'])
+        return response['message']['content']
+
+    @staticmethod
     def show(model: str) -> Mapping[str, Any]:
-        client = Client(host=envConfig.OLLAMA_URL, verify=envConfig.OTERM_VERIFY_SSL)
+        client = Client(host=appConfig.OLLAMA_URL, verify=appConfig.RAG_VERIFY_SSL)
         return client.show(model)

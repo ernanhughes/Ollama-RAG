@@ -1,11 +1,11 @@
 import json
 import os
+import logging
 from pathlib import Path
 from typing import Union, get_type_hints
-
 from dotenv import load_dotenv
 
-from oterm.utils import get_default_data_dir
+from application.utils import get_default_data_dir
 
 load_dotenv()
 
@@ -26,14 +26,15 @@ class EnvConfig:
     """
 
     ENV: str = "development"
-    OLLAMA_HOST: str = "0.0.0.0:11434"
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
+    OLLAMA_HOST: str = "localhost:11434"
+    BASEDIR = os.path.abspath(os.path.dirname(__file__))
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///rag.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    OLLAMA_URL: str = ""
-    OTERM_VERIFY_SSL: bool = True
-    OTERM_DATA_DIR: Path = get_default_data_dir()
-
-    def __init__(self, env):
+    OLLAMA_URL: str = os.environ.get('OLLAMA_URL', 'http://127.0.0.1:5000')
+    RAG_VERIFY_SSL: bool = False
+    RAG_DATA_DIR: Path = get_default_data_dir('rag')
+    LOG_FILE: str = os.environ.get('RAG_LOG_FILENAME', 'rag.log')
+    def __init__(self, env='Development'):
         for field in self.__annotations__:
             if not field.isupper():
                 continue
@@ -74,10 +75,11 @@ class EnvConfig:
 envConfig = EnvConfig(os.environ)
 
 
-class AppConfig:
+class AppConfig(EnvConfig):
     def __init__(self, path: Path | None = None):
+        super().__init__(os.environ)
         if path is None:
-            path = envConfig.OTERM_DATA_DIR / "config.json"
+            path = envConfig.RAG_DATA_DIR / "config.json"
         self._path = path
         self._data = {
             "theme": "dark",
@@ -101,6 +103,41 @@ class AppConfig:
         with open(self._path, "w") as f:
             json.dump(self._data, f)
 
+    def __str__(self):
+        """Return a string representation of the configuration."""
+        return '\n'.join(f'{attr}: {value}' for attr, value in self.__dict__.items())
+
+    def __repr__(self):
+        """Return a string representation for debugging."""
+        return self.__str__()
+
 
 # Expose AppConfig object for app to import
 appConfig = AppConfig()
+
+
+def configure_logging(log_file='app.log', level=logging.DEBUG):
+    """Configures logging for the Flask application.
+
+    Args:
+        log_file (str, optional): Path to the log file. Defaults to 'app.log'.
+        level (int, optional): Logging level. Defaults to logging.DEBUG.
+    """
+    logger = logging.getLogger(__name__)
+    logger.setLevel(level)
+    
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # add formatter to ch
+    ch.setFormatter(formatter)
+
+
+    # add to file
+    fh = logging.FileHandler(log_file)
+    fh.setLevel(level)
+    logger.addHandler(fh)
+
+    return logger
