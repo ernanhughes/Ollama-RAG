@@ -37,6 +37,7 @@
 					<div id="ollamaResponse" class="card-body msg_card_body">
 
 					</div>
+					<img src="{{ url_for('static', filename='copy.svg')}}" class="rounded-square user_img">
 					<div class="loading">
 						<div id="loading" class="loader"></div>
 					</div>
@@ -87,9 +88,13 @@
 
 		function loading() {
 			$("#loading").show();
+			$("#copyText").hide();
 		};
 
-		function hideLoading() { $("#loading").hide() }
+		function hideLoading() { 
+			$("#loading").hide() 
+			$("#copyText").show() 
+		}
 	</script>
 
 </body>
