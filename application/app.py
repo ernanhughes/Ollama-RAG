@@ -33,7 +33,7 @@ def index():
 @app.route("/chat", methods=["GET", "POST"])
 def get_response():
     user_msg = get_user_message(request.form["msg"])
-    model = app.config.get("MODEL")
+    model = app.config.get("OLLAMA_MODEL")
     logger.info(f'Using model: {model} user msg; {user_msg}')
     return response(model, user_msg)
 
