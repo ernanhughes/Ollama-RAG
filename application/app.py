@@ -10,11 +10,6 @@ db = SQLAlchemy(app)
 logger = configure_logging()
 logger.info(f'Config: {str(appConfig)}')
 
-# configuration
-
-# Import the models
-
-# Create the database and tables
 
 def init_db(app: Flask, db: SQLAlchemy):
     from application.models import Setting, ChatQuery, ChatResponse
@@ -26,6 +21,32 @@ def init_db(app: Flask, db: SQLAlchemy):
 from application.ollamallm import OllamaLLM
 from ollama import chat
 
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/chat', methods=['GET', 'POST'])
+def chat():
+    message = request.form['msg']
+    return response(message)
+
+@app.route('/settings/<key>', methods=['GET'])
+def get_setting(key):
+    value = load_setting(key)
+    if value:
+        return jsonify({key: value}), 200
+    else:
+        return jsonify({'error': 'Setting not found'}), 404
+
+@app.route('/settings/<key>', methods=['POST'])
+def update_setting(key):
+    value = request.json.get('value')
+    if value:
+        save_setting(key, value)
+        return jsonify({'message': 'Setting saved'}), 200
+    else:
+        return jsonify({'error': 'Value is required'}), 400
 
 
 
@@ -46,6 +67,9 @@ def start_app():
     init_db(app, db)
     app.run(host="0.0.0.0", port=8080, debug=True)
 
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db)
 
 if __name__ == "__main__":
     start_app()

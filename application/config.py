@@ -31,6 +31,7 @@ class EnvConfig:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///rag.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     OLLAMA_URL: str = os.environ.get('OLLAMA_URL', 'http://127.0.0.1:5000')
+    OLLAMA_MODEL: str = os.environ.get('OLLAMA_MODEL', 'llama3.1')
     RAG_VERIFY_SSL: bool = False
     RAG_DATA_DIR: Path = get_default_data_dir('rag')
     LOG_FILE: str = os.environ.get('RAG_LOG_FILENAME', 'rag.log')
