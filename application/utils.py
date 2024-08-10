@@ -56,3 +56,7 @@ def int_to_semantic_version(version: int) -> str:
     minor = (version >> 8) & 255
     patch = version & 255
     return f"{major}.{minor}.{patch}"
+
+
+def get_user_message(user_message: str) :
+    return [{'role': 'user', 'content': f'{user_message}'}]

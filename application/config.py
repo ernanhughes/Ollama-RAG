@@ -28,7 +28,7 @@ class EnvConfig:
     ENV: str = "development"
     OLLAMA_HOST: str = "localhost:11434"
     BASEDIR = os.path.abspath(os.path.dirname(__file__))
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///rag.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///rag.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     OLLAMA_URL: str = os.environ.get('OLLAMA_URL', 'http://127.0.0.1:5000')
     OLLAMA_MODEL: str = os.environ.get('OLLAMA_MODEL', 'llama3.1')

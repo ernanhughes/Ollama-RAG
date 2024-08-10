@@ -1,1 +1,1 @@
-# rag
+# Ollama Chat
