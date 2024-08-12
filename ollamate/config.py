@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Union, get_type_hints
 from dotenv import load_dotenv
 
-from application.utils import get_default_data_dir
+from ollamate.utils import get_default_data_dir
 
 load_dotenv()
 

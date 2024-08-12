@@ -1,6 +1,4 @@
-import os
-from ollama import chat
-
+from ollamate import chat
 
 def response(user_msg: str, model: str = "llama3.1"):
     messages = [
@@ -14,3 +12,5 @@ def response(user_msg: str, model: str = "llama3.1"):
     content = response["message"]["content"]
     print(f"Response: {content}")
     return content
+
+

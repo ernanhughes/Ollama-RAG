@@ -12,7 +12,7 @@ echo Done
 
 REM Activating the virtual environment
 echo Activating the virtual environment
-call %CD%\.venv\Scripts\activate
+call %CD%\.venv\Scripts\activate.bat
 echo Done
 
 REM Install the required packages from requirements.txt

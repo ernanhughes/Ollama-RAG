@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Posts{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('chat.history') }}">History</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid h-100">
+    <div class="row justify-content-center h-100">
+        <div class="col-md-8 col-xl-6 chat">
+            <div class="card">
+                <div class="card-header msg_head">
+                    <div class="d-flex bd-highlight">
+                        <div class="img_cont">
+                            <img src="{{ url_for('static', filename='logo.jpg')}}" class="rounded-circle user_img">
+                            <span class="online_icon"></span>
+                        </div>
+                        <div class="user_info">
+                            <span>Ollama Chat</span>
+                            <p>Ask me anything!</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="ollamaResponse" class="card-body msg_card_body">
+
+                </div>
+                <img src="{{ url_for('static', filename='copy.svg')}}" class="rounded-square user_img">
+                <div class="loading">
+                    <div id="loading" class="loader"></div>
+                </div>
+                <div class="card-footer">
+                    <form id="messageArea" class="input-group">
+                        <input type="text" id="text" name="msg" placeholder="Type your message..."
+                            autocomplete="off" class="form-control type_msg" required />
+                        <div class="input-group-append">
+                            <button type="submit" id="send" class="input-group-text send_btn" onclick="loading()"><i
+                                    class="fas fa-location-arrow"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $("#messageArea").on("submit", function (event) {
+            const date = new Date();
+            const hour = date.getHours();
+            const minute = date.getMinutes();
+            const str_time = hour + ":" + minute;
+            var rawText = $("#text").val();
+
+            var userHtml = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + rawText + '<span class="msg_time_send">' + str_time + '</span></div><div class="img_cont_msg"></div></div>';
+
+            $("#text").val("");
+            $("#ollamaResponse").append(userHtml);
+
+            $.ajax({
+                data: {
+                    msg: rawText,
+                },
+                type: "POST",
+                url: "/chat",
+            }).done(function (data) {
+                var parsedData = marked.parse(data);
+                var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"></div><div class="msg_cotainer">' + parsedData + '<span class="msg_time">' + str_time + '</span></div></div>';
+                $("#ollamaResponse").append($.parseHTML(botHtml));
+                hideLoading();
+            })
+            event.preventDefault();
+        });
+    });
+
+    function loading() {
+        $("#loading").show();
+        $("#copyText").hide();
+    };
+
+    function hideLoading() { 
+        $("#loading").hide() 
+        $("#copyText").show() 
+    }
+</script>
+{% endblock %}
